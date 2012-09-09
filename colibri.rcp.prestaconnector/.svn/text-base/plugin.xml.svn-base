@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<!--
+/*******************************************************************************
+ * 2008-2011 Projecto Colibri
+ * Marco Lopes (marcolopes@projectocolibri.com)
+ *******************************************************************************/
+-->
+<plugin>
+
+	<extension
+			id="application"
+			point="org.eclipse.core.runtime.applications">
+		<application>
+			<run
+					class="rcp.Application">
+			</run>
+		</application>
+	</extension>
+
+	<extension
+			id="product"
+			point="org.eclipse.core.runtime.products">
+		<product
+				application="colibri.rcp.example.application"
+				name="RCP Colibri Example">
+			<property
+					name="appName"
+					value="RCP Colibri Example">
+			</property>
+			<property
+				name="windowImages"
+	         value="icons/colibri_16.png,icons/colibri_32.png,icons/colibri_48.gif,icons/colibri_64.gif,icons/colibri_128.gif">
+			</property>
+		</product>
+	</extension>
+
+	<extension point="org.eclipse.ui.perspectives">
+		<perspective
+				id="ExamplePerspective"
+				name="#perspective"
+				class="rcp.example.workbench.ExamplePerspective"
+				icon="icons/plug.png">
+		</perspective>
+	</extension>
+
+	<extension point="org.eclipse.ui.views">
+		<view
+				id="PerspectiveView"
+				name="Perspective"
+				class="rcp.example.workbench.PerspectiveView"
+				allowMultiple="false"
+				restorable="true">
+		</view>
+		<view
+				id="ExampleView"
+				name="#example"
+				class="rcp.example.workbench.ExampleView"
+				allowMultiple="false"
+				restorable="true">
+		</view>
+	</extension>
+
+</plugin>

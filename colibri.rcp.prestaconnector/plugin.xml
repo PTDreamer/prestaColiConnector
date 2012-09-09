@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<!--
+/*******************************************************************************
+ * 2008-2011 Projecto Colibri
+ * Marco Lopes (marcolopes@projectocolibri.com)
+ *******************************************************************************/
+-->
+<plugin>
+
+	<extension
+			id="application"
+			point="org.eclipse.core.runtime.applications">
+		<application>
+			<run
+					class="rcp.Application">
+			</run>
+		</application>
+	</extension>
+
+	<extension
+			id="product"
+			point="org.eclipse.core.runtime.products">
+		<product
+				application="colibri.rcp.prestaconnector.application"
+				name="RCP Colibri Presta connector">
+			<property
+					name="appName"
+					value="RCP Colibri Presta connector">
+			</property>
+			<property
+				name="windowImages"
+	         value="platform:/plugin/colibri.rcp.example/icons/colibri_16.png,platform:/plugin/colibri.rcp.example/icons/colibri_32.png,platform:/plugin/colibri.rcp.example/icons/colibri_48.gif,platform:/plugin/colibri.rcp.example/icons/colibri_64.gif,platform:/plugin/colibri.rcp.example/icons/colibri_128.gif">
+			</property>
+		</product>
+	</extension>
+
+	<extension point="org.eclipse.ui.perspectives">
+		<perspective
+				id="ExamplePerspective"
+				name="#perspective"
+				class="rcp.example.workbench.ExamplePerspective"
+				icon="icons/plug.png">
+		</perspective>
+	</extension>
+
+	<extension point="org.eclipse.ui.views">
+		<view
+				id="PerspectiveView"
+				name="Perspective"
+				class="rcp.example.workbench.PerspectiveView"
+				allowMultiple="false"
+				restorable="true">
+		</view>
+		<view
+				id="ExampleView"
+				name="#example"
+				class="rcp.example.workbench.ExampleView"
+				allowMultiple="false"
+				restorable="true">
+		</view>
+	</extension>
+ <extension
+       id="prestaconnector"
+       point="org.eclipse.core.runtime.products">
+    <product
+          application="colibri.rcp.prestaconnector.application"
+          name="RCP Colibri Presta connector">
+       <property
+             name="windowImages"
+             value="platform:/plugin/colibri.rcp.example/icons/colibri_16.png,platform:/plugin/colibri.rcp.example/icons/colibri_32.png,platform:/plugin/colibri.rcp.example/icons/colibri_48.gif,platform:/plugin/colibri.rcp.example/icons/colibri_64.gif,platform:/plugin/colibri.rcp.example/icons/colibri_128.gif">
+       </property>
+       <property
+             name="appName"
+             value="RCP Colibri Presta connector">
+       </property>
+    </product>
+ </extension>
+ <extension
+       id="connector"
+       point="org.eclipse.core.runtime.products">
+    <product
+          application="colibri.rcp.prestaconnector.application"
+          name="RCP Colibri Presta connector">
+       <property
+             name="windowImages"
+             value="platform:/plugin/colibri.rcp.example/icons/colibri_16.png,platform:/plugin/colibri.rcp.example/icons/colibri_32.png,platform:/plugin/colibri.rcp.example/icons/colibri_48.gif,platform:/plugin/colibri.rcp.example/icons/colibri_64.gif,platform:/plugin/colibri.rcp.example/icons/colibri_128.gif">
+       </property>
+       <property
+             name="appName"
+             value="RCP Colibri Presta connector">
+       </property>
+    </product>
+ </extension>
+
+</plugin>

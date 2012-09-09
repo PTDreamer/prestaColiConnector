@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/325/colibri.rcp.example/src/rcp/example/workbench/actions
+END
+ReportExampleAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/!svn/ver/312/colibri.rcp.example/src/rcp/example/workbench/actions/ReportExampleAction.java
+END
+OpenExampleViewAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/!svn/ver/318/colibri.rcp.example/src/rcp/example/workbench/actions/OpenExampleViewAction.java
+END
+DatabaseExampleAction.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/!svn/ver/325/colibri.rcp.example/src/rcp/example/workbench/actions/DatabaseExampleAction.java
+END

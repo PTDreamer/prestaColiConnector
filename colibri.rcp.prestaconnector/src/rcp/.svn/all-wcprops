@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/325/colibri.rcp.example/src/rcp
+END
+Activator.java
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/261/colibri.rcp.example/src/rcp/Activator.java
+END
+ApplicationActionBarAdvisor.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/312/colibri.rcp.example/src/rcp/ApplicationActionBarAdvisor.java
+END
+ApplicationWorkbenchAdvisor.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/312/colibri.rcp.example/src/rcp/ApplicationWorkbenchAdvisor.java
+END
+Application.java
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/318/colibri.rcp.example/src/rcp/Application.java
+END
+ApplicationWorkbenchWindowAdvisor.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/261/colibri.rcp.example/src/rcp/ApplicationWorkbenchWindowAdvisor.java
+END

@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/325/colibri.rcp.example
+END
+build.properties
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/261/colibri.rcp.example/build.properties
+END
+plugin.xml
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/261/colibri.rcp.example/plugin.xml
+END
+colibri.rcp.example.product
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/325/colibri.rcp.example/colibri.rcp.example.product
+END
+.classpath
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/261/colibri.rcp.example/.classpath
+END
+.project
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/261/colibri.rcp.example/.project
+END
+plugin_customization.ini
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/261/colibri.rcp.example/plugin_customization.ini
+END

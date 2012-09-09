@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/325/colibri.rcp.example/src/rcp/example/workbench
+END
+ExamplePerspective.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/317/colibri.rcp.example/src/rcp/example/workbench/ExamplePerspective.java
+END
+ExampleView.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/!svn/ver/317/colibri.rcp.example/src/rcp/example/workbench/ExampleView.java
+END
+PerspectiveView.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/318/colibri.rcp.example/src/rcp/example/workbench/PerspectiveView.java
+END
