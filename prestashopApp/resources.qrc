@@ -1,0 +1,102 @@
+<RCC>
+    <qresource prefix="/png">
+        <file>resources/64 bit.png</file>
+        <file>resources/address books.png</file>
+        <file>resources/advanced.png</file>
+        <file>resources/applications.png</file>
+        <file>resources/archive.png</file>
+        <file>resources/back_alt.png</file>
+        <file>resources/burn.png</file>
+        <file>resources/calculator.png</file>
+        <file>resources/cash.png</file>
+        <file>resources/color.png</file>
+        <file>resources/Computer.png</file>
+        <file>resources/Computer On.png</file>
+        <file>resources/copy doc.png</file>
+        <file>resources/Credit card.png</file>
+        <file>resources/delete archive.png</file>
+        <file>resources/Desktop 2.png</file>
+        <file>resources/down_alt.png</file>
+        <file>resources/edit.png</file>
+        <file>resources/Ekisho Deep Ocean HD1.png</file>
+        <file>resources/exclamation.png</file>
+        <file>resources/exit.png</file>
+        <file>resources/folder.png</file>
+        <file>resources/folder_smart.png</file>
+        <file>resources/forward.png</file>
+        <file>resources/forward all.png</file>
+        <file>resources/forward_alt.png</file>
+        <file>resources/forward button.png</file>
+        <file>resources/forward button white.png</file>
+        <file>resources/GeneralPreferences.png</file>
+        <file>resources/Globe.png</file>
+        <file>resources/Graphite Computer On.png</file>
+        <file>resources/Graphite Desktop.png</file>
+        <file>resources/Graphite Globe.png</file>
+        <file>resources/heineken.png</file>
+        <file>resources/help.png</file>
+        <file>resources/iChat.png</file>
+        <file>resources/info.png</file>
+        <file>resources/install.png</file>
+        <file>resources/intel.png</file>
+        <file>resources/intel 2.png</file>
+        <file>resources/iPhone.png</file>
+        <file>resources/keyboard.png</file>
+        <file>resources/library bookmarked.png</file>
+        <file>resources/lock.png</file>
+        <file>resources/minus.png</file>
+        <file>resources/minus white.png</file>
+        <file>resources/monitor.png</file>
+        <file>resources/moon 2.png</file>
+        <file>resources/moon 3.png</file>
+        <file>resources/movies.png</file>
+        <file>resources/movies alt.png</file>
+        <file>resources/music.png</file>
+        <file>resources/music 2.png</file>
+        <file>resources/new archive.png</file>
+        <file>resources/new doc.png</file>
+        <file>resources/new mail.png</file>
+        <file>resources/notebook.png</file>
+        <file>resources/open alt.png</file>
+        <file>resources/pause.png</file>
+        <file>resources/picture.png</file>
+        <file>resources/Picture Cast.png</file>
+        <file>resources/play.png</file>
+        <file>resources/plus.png</file>
+        <file>resources/Podcast.png</file>
+        <file>resources/public.png</file>
+        <file>resources/record.png</file>
+        <file>resources/refresh.png</file>
+        <file>resources/remove.png</file>
+        <file>resources/rewind button.png</file>
+        <file>resources/rewind button white.png</file>
+        <file>resources/RSS.png</file>
+        <file>resources/RSS_alt.png</file>
+        <file>resources/search.png</file>
+        <file>resources/send.png</file>
+        <file>resources/server.png</file>
+        <file>resources/smiley.png</file>
+        <file>resources/smiley sad.png</file>
+        <file>resources/splash green.png</file>
+        <file>resources/star.png</file>
+        <file>resources/stop.png</file>
+        <file>resources/stop 2.png</file>
+        <file>resources/stop_alt.png</file>
+        <file>resources/sun.png</file>
+        <file>resources/sun 2.png</file>
+        <file>resources/terminal.png</file>
+        <file>resources/trash.png</file>
+        <file>resources/trash full.png</file>
+        <file>resources/unarchive.png</file>
+        <file>resources/Universal.png</file>
+        <file>resources/unread mail.png</file>
+        <file>resources/up_alt.png</file>
+        <file>resources/user.png</file>
+        <file>resources/users.png</file>
+        <file>resources/window.png</file>
+        <file>resources/zoom in.png</file>
+        <file>resources/zoom out.png</file>
+        <file>resources/document-print.png</file>
+        <file>resources/internet-mail.png</file>
+    </qresource>
+</RCC>
