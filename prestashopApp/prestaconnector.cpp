@@ -351,7 +351,7 @@ void prestaConnector::addressesToStruct(QByteArray array,QMap<QString,prestaConn
         adr.country=countries.value(nodes.at(x).firstChildElement("id_country").text(),"Country unknown");
         adr.state=states.value(nodes.at(x).firstChildElement("id_state").text(),"State unknown");
         adr.city=nodes.at(x).firstChildElement("city").text();
-        adr.company==nodes.at(x).firstChildElement("company").text();
+        adr.company=nodes.at(x).firstChildElement("company").text();
         adressList.insert(adr.ID,adr);
     }
 }
@@ -557,13 +557,15 @@ void prestaConnector::renderAutoBrotherPreview(QString fontName,int fontSize,int
     int height=printer->paperRect().height();
     int witdh=printer->paperRect().width();
     painter.begin(printer);
-    int receiverOffsetX=120;// TESTAR
-    int receiverOffsetY=100;
+
     prestaConnector::adress currentAdr;
     bool isFirst=true;
 
     foreach(prestaConnector::adress adr,adresses)
     {
+        int receiverOffsetX=120;// TESTAR
+        int receiverOffsetY=100;
+        int mbaseX=baseX;
         if(!isFirst)
             printer->newPage();
         else
@@ -573,8 +575,8 @@ void prestaConnector::renderAutoBrotherPreview(QString fontName,int fontSize,int
         QFontMetrics fm=QFontMetrics(serifFont,printer);
         int m_fontsize;
         int comulativeY=baseY;
-        int comulativeX=baseX;
-        int xOffSet;
+        int comulativeX=mbaseX;
+        int xOffSet=0;
         for (int x=0;x<2;++x)
         {
             if(x==0)
@@ -591,7 +593,7 @@ void prestaConnector::renderAutoBrotherPreview(QString fontName,int fontSize,int
             else
             {
                 m_fontsize=fontSize;
-                baseX=0;
+                mbaseX=0;
                 serifFont.setPointSize(m_fontsize);
                 painter.setFont(serifFont);
                 fm=QFontMetrics(serifFont,printer);
@@ -611,7 +613,7 @@ void prestaConnector::renderAutoBrotherPreview(QString fontName,int fontSize,int
             comulativeY=comulativeY+fm.ascent();
             if(!currentAdr.company.isEmpty())
             {
-                painter.drawText(xOffSet+baseX,comulativeY,currentAdr.company);
+                painter.drawText(xOffSet+mbaseX,comulativeY,currentAdr.company);
                 comulativeY=comulativeY+fm.ascent();
             }
 
@@ -622,7 +624,7 @@ void prestaConnector::renderAutoBrotherPreview(QString fontName,int fontSize,int
                 fm=QFontMetrics(serifFont,printer);
             }
 
-            painter.drawText(xOffSet+baseX,comulativeY,currentAdr.adress1);
+            painter.drawText(xOffSet+mbaseX,comulativeY,currentAdr.adress1);
             comulativeY=comulativeY+fm.ascent();
             serifFont.setPointSize(m_fontsize);
             painter.setFont(serifFont);
@@ -630,15 +632,15 @@ void prestaConnector::renderAutoBrotherPreview(QString fontName,int fontSize,int
 
             if(!currentAdr.adress2.isEmpty())
             {
-                painter.drawText(xOffSet+baseX,comulativeY,currentAdr.adress2);
+                painter.drawText(xOffSet+mbaseX,comulativeY,currentAdr.adress2);
                 comulativeY=comulativeY+fm.ascent();
             }
-            painter.drawText(xOffSet+baseX,comulativeY,currentAdr.postalCode+" "+currentAdr.city);
+            painter.drawText(xOffSet+mbaseX,comulativeY,currentAdr.postalCode+" "+currentAdr.city);
             comulativeY=comulativeY+fm.ascent();
             if(currentAdr.state!="State unknown")
-                painter.drawText(xOffSet+baseX,comulativeY,QString(currentAdr.state+" "+currentAdr.country).trimmed());
+                painter.drawText(xOffSet+mbaseX,comulativeY,QString(currentAdr.state+" "+currentAdr.country).trimmed());
             else
-                painter.drawText(xOffSet+baseX,comulativeY,QString(currentAdr.country).trimmed());
+                painter.drawText(xOffSet+mbaseX,comulativeY,QString(currentAdr.country).trimmed());
         }
     }
     painter.end();

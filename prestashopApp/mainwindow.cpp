@@ -259,9 +259,9 @@ void MainWindow::colibriFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
     ui->log->append("COLIBRI FINISHED!");
     processColibriOutput(dialog->getColiOutputFile());
-    QFile::remove(dialog->getColiCustomersFile());
-    QFile::remove(dialog->getColiOrdersFile());
-    QFile::remove(dialog->getColiOutputFile());
+ //   QFile::remove(dialog->getColiCustomersFile());
+ //   QFile::remove(dialog->getColiOrdersFile());
+ //   QFile::remove(dialog->getColiOutputFile());
     coliProcess->terminate();
     coliProcess->deleteLater();
 }

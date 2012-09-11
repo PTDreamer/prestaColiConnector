@@ -84,6 +84,38 @@
           name="RCP Colibri Presta connector">
        <property
              name="windowImages"
+             value="icons/colibri_16.png,icons/colibri_32.png,icons/colibri_48.gif,icons/colibri_64.gif,icons/colibri_128.gif">
+       </property>
+       <property
+             name="appName"
+             value="RCP Colibri Presta connector">
+       </property>
+    </product>
+ </extension>
+ <extension
+       id="prestaconnect"
+       point="org.eclipse.core.runtime.products">
+    <product
+          application="colibri.rcp.prestaconnector.application"
+          name="RCP Colibri Presta connector">
+       <property
+             name="windowImages"
+             value="icons/colibri_16.png,icons/colibri_32.png,icons/colibri_48.gif,icons/colibri_64.gif,icons/colibri_128.gif">
+       </property>
+       <property
+             name="appName"
+             value="RCP Colibri Presta connector">
+       </property>
+    </product>
+ </extension>
+ <extension
+       id="presta"
+       point="org.eclipse.core.runtime.products">
+    <product
+          application="colibri.rcp.prestaconnector.application"
+          name="RCP Colibri Presta connector">
+       <property
+             name="windowImages"
              value="/colibri.rcp.example/icons/colibri_16.png,/colibri.rcp.example/icons/colibri_32.png,/colibri.rcp.example/icons/colibri_48.gif,/colibri.rcp.example/icons/colibri_64.gif,/colibri.rcp.example/icons/colibri_128.gif">
        </property>
        <property

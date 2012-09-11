@@ -11,6 +11,7 @@ import org.xml.sax.SAXException;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -92,6 +93,7 @@ public class DOMOrderParser {
 						Entidades entidade = getEntidadeById(getTagValue(
 								"id_address_invoice", eElement));
 						String envio = getTagValue("total_shipping", eElement);
+						System.out.println("SHIPPING:"+envio);
 						String total_paid = getTagValue("total_paid_real",
 								eElement);
 						// inicializa a entidade do documento
@@ -202,12 +204,13 @@ public class DOMOrderParser {
 
 	public void createEnviodocumento(Entidadesdocumentos documento,
 			Entidades entidade, String valor) {
+		System.out.println("SHIPPING function "+valor);
 		try {
 			// cria objecto linha
 			Entidadesdocumentoslinhas linha = documento.createLinhasdocumento();
 			Artigos artigo;
 			// inicializa a linha
-			// EntidadesdocumentoslinhasRules.init(linha, entidade, artigo);
+			//EntidadesdocumentoslinhasRules.init(linha, entidade, artigo);
 			linha.setDescricao("Shipping and handling");
 			// actualiza a quantidade
 			linha.setQuantidade(new BigDecimal(1));
@@ -215,7 +218,7 @@ public class DOMOrderParser {
 				linha.setPreco(new BigDecimal(valor));
 			else {
 				BigDecimal v = new BigDecimal(valor);
-				v = v.divide(new BigDecimal("1.23"));
+				v = v.divide(new BigDecimal("1.23"),2, RoundingMode.HALF_UP);
 				linha.setPreco(v);
 			}
 
@@ -224,9 +227,10 @@ public class DOMOrderParser {
 
 			// adiciona a linha ao documento
 			documento.addLinhasdocumento(linha);
-
+			System.out.println("ADDED SHIPPING TO INVOICE");
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println(e.toString());
 		}
 
 	}
