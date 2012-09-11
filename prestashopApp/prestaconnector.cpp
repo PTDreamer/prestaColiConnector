@@ -204,7 +204,7 @@ QByteArray prestaConnector::getOrders(QString user,QString host,QStringList ids,
 
     }
 }
-QByteArray prestaConnector::getAdresses(QString user,QString host,QStringList ids)
+QByteArray prestaConnector::getAdresses(QString user,QString host,QStringList ids,bool all)
 {
     QByteArray array;
     QString filter;
@@ -217,7 +217,10 @@ QByteArray prestaConnector::getAdresses(QString user,QString host,QStringList id
     QNetworkRequest request;
     request.setRawHeader("Authorization", "Basic " +
                          QByteArray(QString("%1:%2").arg(user).arg(PASSWORD).toAscii()).toBase64());
-    request.setUrl(QUrl(QString("http://%1/api/addresses/?display=full&filter[id]=[%2]").arg(host).arg(filter)));
+    if(all)
+        request.setUrl(QUrl(QString("http://%1/api/addresses/?display=full").arg(host)));
+    else
+        request.setUrl(QUrl(QString("http://%1/api/addresses/?display=full&filter[id]=[%2]").arg(host).arg(filter)));
     QEventLoop q;
     QTimer tT;
     tT.setSingleShot(true);
@@ -236,6 +239,7 @@ QByteArray prestaConnector::getAdresses(QString user,QString host,QStringList id
     {
            emit debuggingInfo("Getting adresses done");
            if (nreply->error() > 0) {
+               qDebug()<<nreply->errorString();
                emit debuggingInfo("GET adresses FAILED Error number = " + nreply->errorString());
                return array;
            }
@@ -699,7 +703,7 @@ void prestaConnector::renderRegistosPreview(QString fontName,int fontSize,int ba
     }
     painter.end();
 }
-void prestaConnector::filterOrders(QString currentState,QByteArray & data,QStringList & adressList,QStringList & ordersList)
+void prestaConnector::filterOrders(QString currentState,QByteArray & data,QStringList & deliveryAdressList,QStringList & invoiceAdressList,QStringList & ordersList)
 {
         QDomDocument doc;
         doc.setContent(data);
@@ -709,20 +713,22 @@ void prestaConnector::filterOrders(QString currentState,QByteArray & data,QStrin
             {
                 if(nodes.at(x).toElement().text()==currentState)//CURRENT_STATE
                 {
-                    adressList.append(nodes.at(x).parentNode().firstChildElement("id_address_delivery").text());
+                    deliveryAdressList.append(nodes.at(x).parentNode().firstChildElement("id_address_delivery").text());
+                    invoiceAdressList.append(nodes.at(x).parentNode().firstChildElement("id_address_invoice").text());
                     ordersList.append(nodes.at(x).parentNode().firstChildElement("id").text());
                 }
             }
-            emit debuggingInfo(QString("Orders to process:%0 IDs:%1").arg(adressList.count()).arg(ordersList.join(", ")));
+            emit debuggingInfo(QString("Orders to process:%0 IDs:%1").arg(deliveryAdressList.count()).arg(ordersList.join(", ")));
     }
 }
 void prestaConnector::checkDelivery(QString user,QString host)
 {
     QStringList adressList;
+    QStringList invoiceList;
     QStringList orderList;
     QMap<QString,order> mapOrder;
     QByteArray array=getOrders(user,host,QStringList(),true);
-    filterOrders(SHIPPED,array,adressList,orderList);
+    filterOrders(SHIPPED,array,adressList,invoiceList,orderList);
     ordersToStruct(array,mapOrder);
     foreach(QString ord,orderList)
     {

@@ -84,7 +84,7 @@
           name="RCP Colibri Presta connector">
        <property
              name="windowImages"
-             value="platform:/plugin/colibri.rcp.example/icons/colibri_16.png,platform:/plugin/colibri.rcp.example/icons/colibri_32.png,platform:/plugin/colibri.rcp.example/icons/colibri_48.gif,platform:/plugin/colibri.rcp.example/icons/colibri_64.gif,platform:/plugin/colibri.rcp.example/icons/colibri_128.gif">
+             value="/colibri.rcp.example/icons/colibri_16.png,/colibri.rcp.example/icons/colibri_32.png,/colibri.rcp.example/icons/colibri_48.gif,/colibri.rcp.example/icons/colibri_64.gif,/colibri.rcp.example/icons/colibri_128.gif">
        </property>
        <property
              name="appName"

@@ -58,7 +58,7 @@ public:
     QByteArray retrieveCountries(QString user, QString host,QMap<QString, QString> &countries);
     QByteArray retrieveStates(QString user, QString host, QMap<QString, QString> &states);
     QByteArray getOrders(QString user, QString host, QStringList ids=QStringList(), bool validOnly=true,QString customFilter=QString());
-    QByteArray getAdresses(QString user, QString host, QStringList ids);
+    QByteArray getAdresses(QString user, QString host, QStringList ids, bool all=false);
     void arrayToFile(QByteArray & array,QString file);
     void addressesToStruct(QByteArray array, QMap<QString, prestaConnector::adress> &adressList);
     void setTracking(QString user, QString host, QString orderID, QString trackingNumber);
@@ -68,7 +68,7 @@ public:
     void renderRegistosPreview(QString fontName, int fontSize, int baseX, int baseY, prestaConnector::adress sender, QList<prestaConnector::adress> &adresses, QPrinter *printer);
     QByteArray retrieveTaxes(QString user, QString host);
     QByteArray saveAllAdressesToFile(QString user, QString host, QString filename);
-    void filterOrders(QString currentState, QByteArray &data, QStringList &adressList, QStringList &ordersList);
+    void filterOrders(QString currentState, QByteArray &data, QStringList &adressList,QStringList & invoiceAdressList, QStringList &ordersList);
     void ordersToStruct(QByteArray array, QMap<QString, prestaConnector::order> &orderList);
     QByteArray getAdressesByName(QString user, QString host, QString customerName);
     void checkDelivery(QString user, QString host);

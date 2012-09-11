@@ -15,11 +15,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.dma.utils.eclipse.UIHelper;
 import org.dma.utils.eclipse.swt.DialogHandler;
 import org.dma.utils.java.Debug;
 import org.dma.utils.java.apache.mail.EmailAddress;
 import org.dma.utils.java.apache.mail.EmailParameters;
 import org.dma.utils.java.array.ErrorList;
+import org.eclipse.swt.printing.PrintDialog;
+import org.eclipse.swt.printing.PrinterData;
+
 import java.lang.Number;
 
 import rcp.Application;
@@ -48,23 +52,23 @@ import rcp.colibri.xml.licencas.ValidadeDocument;
 
 public class DOMOrderParser {
 	public void ParseOrders(String ordersFile, Document output,String printerName) {
+		System.out.println("Begin parse orders");
 		try {
 
 			Element orders = output.createElement("Orders");
 			Element rootElement = output.getDocumentElement();
 			rootElement.appendChild(orders);
 
-			File fXmlFile = new File("orders");
+			File fXmlFile = new File(ordersFile);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory
 					.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(fXmlFile);
 			doc.getDocumentElement().normalize();
 
-			System.out.println("Root element :"
-					+ doc.getDocumentElement().getNodeName());
+			
 			NodeList nList = doc.getElementsByTagName("order");
-			System.out.println("-----------------------" + nList.getLength());
+			System.out.println("Parsing " + nList.getLength()+" orders");
 
 			for (int temp = 0; temp < nList.getLength(); temp++) {
 				Node nNode = nList.item(temp);
@@ -86,7 +90,7 @@ public class DOMOrderParser {
 
 						// carrega uma entidade do tipo CLIENTE
 						Entidades entidade = getEntidadeById(getTagValue(
-								"id_customer", eElement));
+								"id_address_invoice", eElement));
 						String envio = getTagValue("total_shipping", eElement);
 						String total_paid = getTagValue("total_paid_real",
 								eElement);
@@ -239,7 +243,7 @@ public class DOMOrderParser {
 						QueryDefinition.QUERY_ORDER.ASCENDING));
 		if (collection.size() < 1) {
 			System.out
-					.println("getEntidadeById couldn't find customer returning null");
+					.println("getEntidadeById couldn't find customer "+id+" returning null");
 			return null;
 		} else {
 			Iterator<Entidades> iterator = collection.iterator();
@@ -272,13 +276,11 @@ public class DOMOrderParser {
 	}
 
 	private static String getTagValue(String sTag, Element eElement) {
-		System.out.println("getTag " + sTag);
 		NodeList nlList = eElement.getElementsByTagName(sTag).item(0)
 				.getChildNodes();
 		if (nlList.getLength() == 0)
 			return "";
 		Node nValue = (Node) nlList.item(0);
-		System.out.println("getTag2 " + nValue.getNodeValue());
 		return nValue.getNodeValue();
 	}
 
@@ -297,7 +299,20 @@ public class DOMOrderParser {
 				action);
 		String file = report.process();
 		System.out.println("Output file: " + file);
-		report.output(printerName);
+		System.out.println("PRINTER ISEMPTY="+printerName.isEmpty());
+		if(!printerName.isEmpty())
+		{
+			report.output(printerName);
+			System.out.println("PRINTING TO PRINTER:"+printerName);
+		}
+		else
+		{
+			System.out.println("PRINTING WITH DIALOG");
+			 PrintDialog dialog = new PrintDialog(UIHelper.getWorkbenchShell());
+			 PrinterData printerData = dialog.open();
+			 printerName = (printerData == null) ? null : printerData.name;
+			report.output(printerName);
+		}
 	}
 
 	/**

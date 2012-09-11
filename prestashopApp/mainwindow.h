@@ -22,7 +22,9 @@
 #include <QInputDialog>
 #include "trackingnumberdialog.h"
 #include "senddialog.h"
-
+#include <QFileInfo>
+#include <QDir>
+#include <QDateTime>
 namespace Ui {
     class MainWindow;
 }
@@ -40,7 +42,10 @@ public:
 
     void refreshTable();
     int processColibriOutput(QString file);
+    bool coliBackup();
 private slots:
+    void coliReadyRead();
+    void coliStarted();
     void addDebugInfo(QString text);
     void on_actionOptions_triggered();
 
@@ -83,10 +88,12 @@ private slots:
     void on_pushButton_8_clicked();
 
 private:
+    QProcess * coliProcess;
     QMap<QString,prestaConnector::adress> adrMap;
     QMap<QString,prestaConnector::order> orderMap;
     QByteArray filteredOrders;
-    QByteArray adrArray;
+    QByteArray deliveryAdrArray;
+    QByteArray invoiceAdrArray;
     Ui::MainWindow *ui;
     QSettings * settings;
     mode automode;

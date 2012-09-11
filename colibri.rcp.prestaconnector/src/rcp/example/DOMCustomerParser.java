@@ -16,6 +16,7 @@ import java.util.Iterator;
 import org.dma.utils.eclipse.swt.DialogHandler;
 import org.dma.utils.java.Debug;
 import org.dma.utils.java.array.ErrorList;
+import org.eclipse.core.runtime.Platform;
 
 import rcp.colibri.core.mappers.filters.FilterMap;
 import rcp.colibri.core.mappers.filters.FilterMap.OPERANDS.TYPES;
@@ -112,21 +113,18 @@ public class DOMCustomerParser {
 			Document doc = dBuilder.parse(fXmlFile);
 			doc.getDocumentElement().normalize();
 
-			System.out.println("ParseCustomer Root element :"
-					+ doc.getDocumentElement().getNodeName());
+			
 			NodeList nList = doc.getElementsByTagName("address");
-			System.out.println("ParseCustomer number of adress:" + nList.getLength());
+			System.out.println("ParseCustomer number of adresses:" + nList.getLength());
 			
 			for (int temp = 0; temp < nList.getLength(); temp++) {
 				Node nNode = nList.item(temp);
 				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) nNode;
-					System.out.println("First Name : "
-							+ getTagValue("firstname", eElement));
-					System.out.println("Last Name : "
-							+ getTagValue("lastname", eElement));
+					
+					System.out.println("Parsing Client "+ getTagValue("firstname", eElement)
+							+" "+ getTagValue("lastname", eElement)+" with ID="+getTagValue("id", eElement));
 					String id = getTagValue("id", eElement);
-					System.out.println(id);
 					id = "presta:" + id;
 					Element adress = output.createElement("Adress");
 					adresses.appendChild(adress);
@@ -147,7 +145,6 @@ public class DOMCustomerParser {
 						Element newe = output.createElement("new");
 						newe.appendChild(output.createTextNode("true"));
 						adress.appendChild(newe);
-						
 						System.out.println("Cliente nao encontrado "
 								+ getTagValue("id", eElement));
 						try {
@@ -172,9 +169,9 @@ public class DOMCustomerParser {
 							entidade.setTelefone(getTagValue("phone", eElement));
 							entidade.setTelemovel(getTagValue("phone_mobile",
 									eElement));
-							System.out.println(getTagValue("id_country",
+							System.out.println("CountryID"+getTagValue("id_country",
 									eElement));
-							System.out.println(getCountry(getTagValue(
+							System.out.println("Country:"+getCountry(getTagValue(
 									"id_country", eElement)));
 							System.out.println(ColibriDatabase.loadPaises(
 									getCountry(getTagValue("id_country",
@@ -191,6 +188,7 @@ public class DOMCustomerParser {
 										.loadCodigosiva("01"));
 							}
 							// grava a entidade na base de dados
+							System.out.println("Prepare to save new customer");
 							ErrorList error = ColibriDatabase.storeEntidades(
 									entidade, false);
 							Element idcoli = output.createElement("colibri_id");
@@ -198,6 +196,7 @@ public class DOMCustomerParser {
 							adress.appendChild(idcoli);
 							// apresenta possiveis erros
 							DialogHandler.error(error.getErrors());
+							System.out.println("New customer done");
 
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -205,12 +204,13 @@ public class DOMCustomerParser {
 					}
 					else
 					{
+						System.out.println("Cliente encontrado");
 						Element newe = output.createElement("new");
 						newe.appendChild(output.createTextNode("false"));
 						adress.appendChild(newe);
 	
 					}
-					System.out.println("FOUND:" + collection.size());
+					
 				}
 			}
 		} catch (Exception e) {
@@ -219,19 +219,19 @@ public class DOMCustomerParser {
 	}
 
 	private static String getTagValue(String sTag, Element eElement) {
-		System.out.println("getTag " + sTag);
 		NodeList nlList = eElement.getElementsByTagName(sTag).item(0)
 				.getChildNodes();
 		if (nlList.getLength() == 0)
 			return "";
 		Node nValue = (Node) nlList.item(0);
-		System.out.println("getTag2 " + nValue.getNodeValue());
+
 		return nValue.getNodeValue();
 	}
 
 	private String getCountry(String id) {
+		System.out.println("Using country file "+Platform.getInstallLocation().getURL().getPath()+"countries");
 		try {
-			File fXmlFile = new File("countries");
+			File fXmlFile = new File(Platform.getInstallLocation().getURL().getPath()+"countries");
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory
 					.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -239,16 +239,14 @@ public class DOMCustomerParser {
 			doc = dBuilder.parse(fXmlFile);
 			doc.getDocumentElement().normalize();
 
-			System.out.println("Root element :"
-					+ doc.getDocumentElement().getNodeName());
+			
 			NodeList nList = doc.getElementsByTagName("country");
-			System.out.println("-----------------------" + nList.getLength());
-
+			
+			System.out.println("Loaded "+nList.getLength()+" countries");
 			for (int temp = 0; temp < nList.getLength(); temp++) {
 				Node nNode = nList.item(temp);
 				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) nNode;
-					System.out.println(getTagValue("id", eElement) + "==" + id);
 					if (getTagValue("id", eElement).equals(id)) {
 						System.out.println("TRUE");
 						return getTagValue("iso_code", eElement);
@@ -263,7 +261,7 @@ public class DOMCustomerParser {
 
 	private boolean hasTax(String country) {
 		try {
-			File fXmlFile = new File("taxes");
+			File fXmlFile = new File(Platform.getInstallLocation().getURL().getPath()+"taxes");
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory
 					.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

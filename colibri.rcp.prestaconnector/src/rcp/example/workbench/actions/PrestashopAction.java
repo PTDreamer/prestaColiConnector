@@ -95,18 +95,31 @@ public class PrestashopAction extends Action implements IWorkbenchAction {
 			DOMCustomerParser parser = new DOMCustomerParser();
 			parser.InitialParse(initCustomers);
 		}
-		if(!customerFile.isEmpty() && !outputFile.isEmpty())
+		*/
+		boolean run=true;
+		if(customerFile.isEmpty())
 		{
-			DOMCustomerParser parser = new DOMCustomerParser();
-			parser.ParseCustomer(customerFile,doc);
+			System.out.println("Customers file is missing");
+			run=false;
 		}
-
-		if(!customerFile.isEmpty() && !outputFile.isEmpty())
+		if(ordersFile.isEmpty())
 		{
-			DOMOrderParser parser = new DOMOrderParser();
-			parser.ParseOrders(ordersFile,doc,printerName);
-		}*/
-		saveDocToFile(doc, outputFile);
+			System.out.println("Orders file is missing");
+			run=false;
+		}
+		if(outputFile.isEmpty())
+		{
+			System.out.println("Output file is missing");
+			run=false;
+		}
+		if(run)
+		{
+			DOMCustomerParser cparser = new DOMCustomerParser();
+			cparser.ParseCustomer(customerFile,doc);
+			DOMOrderParser oparser = new DOMOrderParser();
+			oparser.ParseOrders(ordersFile,doc,printerName);
+			saveDocToFile(doc, outputFile);
+		}
 
 	}
 
@@ -116,23 +129,26 @@ public class PrestashopAction extends Action implements IWorkbenchAction {
 	
 	private void saveDocToFile(Document doc,String file)
 	{
+		System.out.println("Beging file save");
 		// write the content into xml file
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer;
 		try {
+			System.out.println("Try");
 			transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
 			StreamResult result = new StreamResult(new File(file));
 
 			// Output to console for testing
-			// StreamResult result = new StreamResult(System.out);
 			transformer.transform(source, result);
+			//StreamResult result2 = new StreamResult(System.out);
+			//transformer.transform(source, result);
 		}
 
 		catch (TransformerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("File saved!");
+		System.out.println("File saved to "+file);
 	}
 }

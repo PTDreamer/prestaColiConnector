@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
     settings=new QSettings("JB Tech","prestashop app",this);
     dialog=new DialogSettings(settings,this);
     connect(ui->doNothing,SIGNAL(toggled(bool)),this,SLOT(setMode()));
@@ -22,7 +23,8 @@ MainWindow::MainWindow(QWidget *parent) :
    // processColibriOutput("/home/jb/test");
     connector.loadCountriesAndStates(dialog->getLogin(),dialog->getHost());
     connect(&connector,SIGNAL(debuggingInfo(QString)),this,SLOT(addDebugInfo(QString)));
-/*
+
+    /*
     prestaConnector con;
     QStringList list;
     QMap<QString,QString> map;
@@ -66,20 +68,22 @@ void MainWindow::on_pushButton_clicked()//Manual:FetchOrders
     orderMap.clear();
     adrMap.clear();
     filteredOrders.clear();
-    adrArray.clear();
+    deliveryAdrArray.clear();
 
     QByteArray allOrders=connector.getOrders(dialog->getLogin(),dialog->getHost());
     QStringList orders;
-    QStringList adresses;
-    connector.filterOrders(PAYMENT_ACCEPTED,allOrders,adresses,orders);
+    QStringList deliveryAdresses;
+    QStringList invoiceAdresses;
+    connector.filterOrders(PAYMENT_ACCEPTED,allOrders,deliveryAdresses,invoiceAdresses,orders);
     if(orders.length()>0)
+    {
         filteredOrders=connector.getOrders(dialog->getLogin(),dialog->getHost(),orders);
-    adrArray=connector.getAdresses(dialog->getLogin(),dialog->getHost(),adresses);
-
-    connector.addressesToStruct(adrArray,adrMap);
+    }
+    deliveryAdrArray=connector.getAdresses(dialog->getLogin(),dialog->getHost(),deliveryAdresses);
+    invoiceAdrArray=connector.getAdresses(dialog->getLogin(),dialog->getHost(),invoiceAdresses);
+    connector.addressesToStruct(deliveryAdrArray,adrMap);
     connector.ordersToStruct(filteredOrders,orderMap);
     refreshTable();
-
 }
 
 void MainWindow::on_tableWidget_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous)
@@ -119,8 +123,8 @@ void MainWindow::a4Render(QPrinter *printer)
 {
     QList<prestaConnector::adress> list=adrMap.values();
     connector.renderAutoA4Preview(dialog->getFont(),dialog->getAutoFontSize(),dialog->getAutoBaseX(),dialog->getAutoBaseY(),ui->autoA4Offset->text().toInt(),false,list,printer);
-
 }
+
 void MainWindow::brotherRender(QPrinter *printer)
 {
     prestaConnector::adress adr;
@@ -156,7 +160,7 @@ void MainWindow::on_pushButton_5_clicked()//Manual:Print Registos de envio
 {
     if(adrMap.values().length()<1)
     {
-        QMessageBox::critical(this,"Error","NÃ£o existem encomenda a processar");
+        QMessageBox::critical(this,"Error","NÃo existem encomenda a processar");
     }
     else
     {
@@ -180,7 +184,7 @@ void MainWindow::on_pushButton_4_clicked()//Manual:Print Auto Brother
 {
     if(adrMap.values().length()<1)
     {
-        QMessageBox::critical(this,"Error","NÃ£o existem encomenda a processar");
+        QMessageBox::critical(this,"Error","NÃo existem encomenda a processar");
     }
     else
     {
@@ -226,23 +230,40 @@ void MainWindow::a4SenderRender(QPrinter *printer)
 
 void MainWindow::on_pushButton_6_clicked()//Manual:Print faturas
 {
-    QMap<QString,QString> tempmap;
-    QByteArray temp=connector.retrieveCountries(dialog->getLogin(),dialog->getHost(),tempmap);
-    connector.arrayToFile(temp,dialog->getColiCountriesFile());
-    connector.arrayToFile(adrArray,dialog->getColiCustomersFile());
-    connector.arrayToFile(filteredOrders,dialog->getColiOrdersFile());
-    temp=connector.retrieveTaxes(dialog->getLogin(),dialog->getHost());
-    connector.arrayToFile(temp,dialog->getColiTaxesFile());
-    QStringList coliParameters;
-    coliParameters<<"konqueror"<<"file:/home/thomas";
-    QProcess myProcess(this);
-    connect(&myProcess,SIGNAL(finished(int, QProcess::ExitStatus)),this,SLOT(colibriFinished (int, QProcess::ExitStatus)));
-    myProcess.start(dialog->getColiPath(),coliParameters);
+    if(coliBackup())
+    {
+        QMap<QString,QString> tempmap;
+        //  QByteArray temp=connector.retrieveCountries(dialog->getLogin(),dialog->getHost(),tempmap);
+        //  connector.arrayToFile(temp,dialog->getColiCountriesFile());
+        connector.arrayToFile(invoiceAdrArray,dialog->getColiCustomersFile());
+        connector.arrayToFile(filteredOrders,dialog->getColiOrdersFile());
+        //  temp=connector.retrieveTaxes(dialog->getLogin(),dialog->getHost());
+        //  connector.arrayToFile(temp,dialog->getColiTaxesFile());
+        QStringList coliParameters;
+        coliParameters<<"-license"<<dialog->getColiLicense()<<"-database"<<dialog->getColiDB();
+        coliParameters<<"-ordersFile"<<dialog->getColiOrdersFile()<<"-customersFile"<<dialog->getColiCustomersFile();
+        coliParameters<<"-outputFile"<<dialog->getColiOutputFile()<<"-printerName"<<dialog->getColiPrinter();
+        coliProcess=new QProcess(this);
+        coliProcess->setReadChannel(QProcess::StandardOutput);
+        connect(coliProcess,SIGNAL(finished(int, QProcess::ExitStatus)),this,SLOT(colibriFinished (int, QProcess::ExitStatus)));
+        connect(coliProcess,SIGNAL(readyRead()),this,SLOT(coliReadyRead()));
+        connect(coliProcess,SIGNAL(started()),this,SLOT(coliStarted()));
+        coliProcess->start(dialog->getColiPath(),coliParameters);
+        qDebug()<<coliProcess->state()<<dialog->getColiPath();
+    }
+    else
+        ui->log->append("Could not backup colibri DB, not goig to process invoices");
 }
 
 void MainWindow::colibriFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
+    ui->log->append("COLIBRI FINISHED!");
     processColibriOutput(dialog->getColiOutputFile());
+    QFile::remove(dialog->getColiCustomersFile());
+    QFile::remove(dialog->getColiOrdersFile());
+    QFile::remove(dialog->getColiOutputFile());
+    coliProcess->terminate();
+    coliProcess->deleteLater();
 }
 
 void MainWindow::on_addByOrderIDAct_clicked()
@@ -392,6 +413,7 @@ int MainWindow::processColibriOutput(QString file)
     {
         connector.setOrderField(dialog->getLogin(),dialog->getHost(),str,"current_state",STICKERS_PRINTED);
     }
+
     return ret;
 }
 
@@ -410,4 +432,25 @@ void MainWindow::on_pushButton_8_clicked()
 void MainWindow::addDebugInfo(QString text)
 {
     ui->log->append(text);
+}
+bool MainWindow::coliBackup()
+{
+    QFileInfo fileInfo(dialog->getColiDB()+".h2.db");
+    qDebug()<<fileInfo.absoluteFilePath();
+    qDebug()<<fileInfo.absolutePath();
+    qDebug()<<fileInfo.fileName();
+    qDebug()<<fileInfo.absolutePath()+QDir::separator()+fileInfo.baseName()+QDateTime::currentDateTime().toString("hhmmddMMyy")+"."+fileInfo.completeSuffix();
+    QFile file;
+    bool result = file.copy(dialog->getColiDB()+".h2.db", fileInfo.absolutePath()+QDir::separator()+fileInfo.baseName()+QDateTime::currentDateTime().toString("hhmmddMMyy")+"."+fileInfo.completeSuffix());
+    qDebug()<<file.errorString();
+    return result;
+}
+
+void MainWindow::coliReadyRead()
+{
+    ui->log->append(coliProcess->readAll());
+}
+void MainWindow::coliStarted()
+{
+    qDebug()<<"COLI STARTED";
 }

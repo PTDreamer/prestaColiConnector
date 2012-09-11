@@ -38,6 +38,8 @@ DialogSettings::DialogSettings(QSettings * settings,QWidget *parent) :
     ui->coliPath->setText(m_settings->value("coliPath","").toString());    
     ui->countriesFilename->setText(m_settings->value("coliCountriesFile","").toString());
     ui->taxesFilename->setText(m_settings->value("coliTaxesFile","").toString());
+    ui->coliDB->setText(m_settings->value("coliDB","").toString());
+    ui->coliLicense->setText(m_settings->value("coliLicense","").toString());
 
     ui->coliPrinter->setCurrentIndex(ui->coliPrinter->findText(m_settings->value("coliPrinter","none").toString()));
 
@@ -76,6 +78,9 @@ void DialogSettings::on_buttonBox_accepted()
     m_settings->setValue("coliOutputFile",ui->coliOutputFile->text());
     m_settings->setValue("coliCountriesFile",ui->countriesFilename->text());
     m_settings->setValue("coliTaxesFile",ui->taxesFilename->text());
+
+    m_settings->setValue("coliDB",ui->coliDB->text());
+    m_settings->setValue("coliLicense",ui->coliLicense->text());
 
     m_settings->setValue("coliPath",ui->coliPath->text());
     m_settings->setValue("coliPrinter",ui->coliPrinter->currentText());

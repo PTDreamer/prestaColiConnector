@@ -153,7 +153,7 @@ public class Application implements IApplication {
 		ColibriLogin login=new ColibriLogin();
 
 		try{
-
+			System.out.println("Using licence file:"+license+" and database:"+database);
 			if (LicenceManager.instance.load(
 				/*
 				 * LICENCA

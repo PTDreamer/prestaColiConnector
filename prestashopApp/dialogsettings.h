@@ -32,6 +32,8 @@ public:
     QString getColiOutputFile(){return m_settings->value("coliOutputFile","").toString();}
     QString getColiCountriesFile(){return m_settings->value("coliCountriesFile","").toString();}
     QString getColiTaxesFile(){return m_settings->value("coliTaxesFile","").toString();}
+    QString getColiDB(){return m_settings->value("coliDB","").toString();}
+    QString getColiLicense(){return m_settings->value("coliLicense","").toString();}
 
     QString getColiPath(){return m_settings->value("coliPath","").toString();}
     QString getColiPrinter(){return m_settings->value("coliPrinter","none").toString();}
