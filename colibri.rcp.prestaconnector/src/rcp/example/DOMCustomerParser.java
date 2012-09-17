@@ -278,7 +278,7 @@ public class DOMCustomerParser {
 				Node nNode = nList.item(temp);
 				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) nNode;
-					if (getTagValue("id_country", eElement).equals(country)) {
+					if (getTagValue("id_country", eElement).equals(country) && getTagValue("id_tax_rules_group", eElement).equals("1")) {
 						if (getTagValue("id_tax", eElement).equals("1")) {
 							return true;
 						} else {
