@@ -36,6 +36,7 @@ void TrackingNumberDialog::load(int order)
     {
         track t=mappointer->values().at(order);
         ui->customerName->setText(t.customerName);
+        ui->trackingNumber->setText("");
     }
 }
 
@@ -43,21 +44,31 @@ void TrackingNumberDialog::on_pbnext_clicked()
 {
     ++index;
     if(!(index<mappointer->values().length() && index>=0))
+    {
         --index;
+    }
     load(index);
     ui->trackingNumber->setFocus();
 }
 
 void TrackingNumberDialog::on_pbOK_clicked()
 {
+    static bool closing=false;
+    if(!closing)
+    {
     track t=mappointer->values().at(index);
     t.trackingNumber=ui->trackingNumber->text();
     mappointer->remove(t.orderID);
     mappointer->insert(t.orderID,t);
     ++index;
     if(!(index<mappointer->values().length() && index>=0))
+    {
+        closing=true;
         --index;
+        this->done(QDialog::Accepted);
+    }
     load(index);
+    }
 }
 
 void TrackingNumberDialog::on_pbprevious_clicked()
@@ -80,10 +91,7 @@ void TrackingNumberDialog::zbarReadyRead()
 
     qDebug()<<"SCANNED:"<<s;
     ui->trackingNumber->setText(s);
-    if(ui->pbnext->isVisible())
-        on_pbnext_clicked();
-    else
-        on_pbOK_clicked();
+    on_pbOK_clicked();
 }
 void TrackingNumberDialog::zbarStarted()
 {
@@ -97,12 +105,4 @@ void TrackingNumberDialog::zbarStarted()
     this->activateWindow();
     this->setFocus();
     ui->trackingNumber->setFocus();
-}
-
-void TrackingNumberDialog::on_trackingNumber_returnPressed()
-{
-    if(ui->pbnext->isVisible())
-        on_pbnext_clicked();
-    else
-        on_pbOK_clicked();
 }

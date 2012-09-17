@@ -36,7 +36,8 @@ public slots:
 private slots:
     void on_pbprevious_clicked();
 
-    void on_trackingNumber_returnPressed();
+ //   void on_trackingNumber_returnPressed();
+
 
 private:
     QProcess *zbar;
