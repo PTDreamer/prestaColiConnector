@@ -13,6 +13,7 @@
 #include <QPainter>
 #include <QFile>
 #include <QDebug>
+#include <QMessageBox>
 
 class prestaConnector:public QObject
 {

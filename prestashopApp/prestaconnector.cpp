@@ -745,13 +745,17 @@ void prestaConnector::checkDelivery(QString user,QString host)
         connect(m_network, SIGNAL(finished(QNetworkReply*)),
                 &loop, SLOT(quit()));
         connect(&tT, SIGNAL(timeout()), &loop, SLOT(quit()));
+        tT.start(500);
+        loop.exec();
         nreply = m_network->get(request);
         tT.start(30000);
         loop.exec();
+        disconnect(m_network, SIGNAL(finished(QNetworkReply*)),
+                &loop, SLOT(quit()));
+        disconnect(&tT, SIGNAL(timeout()), &loop, SLOT(quit()));
         if(!tT.isActive()){
             emit debuggingInfo("Error checking tracking status");
             tT.stop();
-            return;
         }
         else
         {
@@ -765,8 +769,11 @@ void prestaConnector::checkDelivery(QString user,QString host)
                    QString string(ret);
                    if(string.contains("ENTREGA CONSEGUIDA"))
                    {
-                       emit debuggingInfo("Tracking page confirmed delivery, setting order now");
-                       setOrderField(user,host,ord,"current_state",DELIVERED);
+                       if(true)//QMessageBox::Yes==QMessageBox::question(NULL,"Confirm delivery set",QString("Order %0 was delivered").arg(ord),QMessageBox::Yes,QMessageBox::No))
+                       {
+                            emit debuggingInfo("Tracking page confirmed delivery, setting order now");
+                            setOrderField(user,host,ord,"current_state",DELIVERED);
+                       }
                    }
                    else
                    {
