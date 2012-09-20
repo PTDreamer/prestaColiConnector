@@ -651,14 +651,15 @@ void prestaConnector::renderRegistosPreview(QString fontName,int fontSize,int ba
     int height=printer->paperRect().height();
     int witdh=printer->paperRect().width();
     QFont serifFont(fontName, fontSize-5, QFont::Normal);
+    QFontMetrics fm=QFontMetrics(serifFont,printer);
     int xxOffset=baseX;
-    int yyOffset=baseY+850;
-    int nameYPos=250;
-    int adrYPos=480;
-    int postalCodePos=780;
-    int charSpace=120;
-    int postalCodeDiv=40;
-    int lineOffset=80;
+    int yyOffset=baseY+170;
+    int nameYPos=200;
+    int adrYPos=245;
+    int postalCodePos=310;
+    int charSpace=23;
+    int postalCodeDiv=10;
+    int lineOffset=fm.height()+1;
     painter.begin(printer);
     painter.setFont(serifFont);
     bool newPage=false;
@@ -674,13 +675,13 @@ void prestaConnector::renderRegistosPreview(QString fontName,int fontSize,int ba
         painter.drawText(baseX,adrYPos+baseY+lineOffset,adr.adress2);
         int pc=0;
         int xxx=0;
-        painter.drawText(pc+baseX+900,postalCodePos+baseY,adr.postalCode);
+        painter.drawText(pc+baseX+200,postalCodePos+baseY,adr.postalCode);
         QString compose;
         compose=adr.city;
         if(!adr.state.isEmpty() && !adr.state.contains("State unknown"))
             compose=compose+", "+adr.state;
         compose=compose+", "+adr.country;
-        painter.drawText(baseX+1300,postalCodePos+baseY,compose);
+        painter.drawText(baseX+200+fm.width(adr.postalCode)+5,postalCodePos+baseY,compose);
         painter.drawText(xxOffset,nameYPos+yyOffset,sender.lastName+", "+sender.firstName);
         painter.drawText(xxOffset,adrYPos+yyOffset,sender.adress1);
         painter.drawText(xxOffset,adrYPos+yyOffset+lineOffset,sender.adress2);
@@ -692,7 +693,7 @@ void prestaConnector::renderRegistosPreview(QString fontName,int fontSize,int ba
                 pc=postalCodeDiv;
             if(sender.postalCode[xx]!='-')
             {
-                painter.drawText(pc+baseX+charSpace*xxx-50,postalCodePos+yyOffset,QString(sender.postalCode[xx]));
+                painter.drawText(pc+baseX+charSpace*xxx+12,postalCodePos+yyOffset,QString(sender.postalCode[xx]));
                 ++xxx;
             }
         }
@@ -700,11 +701,74 @@ void prestaConnector::renderRegistosPreview(QString fontName,int fontSize,int ba
         if(!sender.state.isEmpty())
             compose=compose+", "+sender.state;
         compose=compose+", "+sender.country;
-        painter.drawText(baseX+800,postalCodePos+yyOffset,compose);
+        painter.drawText(baseX+180,postalCodePos+yyOffset,compose);
+        painter.drawText(483,524,"X");
         newPage=true;
     }
     painter.end();
 }
+//void prestaConnector::renderRegistosPreview(QString fontName,int fontSize,int baseX,int baseY, prestaConnector::adress sender,QList<prestaConnector::adress> & adresses,QPrinter *printer)
+//{
+//    QPainter painter;
+//    int height=printer->paperRect().height();
+//    int witdh=printer->paperRect().width();
+//    QFont serifFont(fontName, fontSize-5, QFont::Normal);
+//    QFontMetrics fm=QFontMetrics(serifFont,printer);
+//    qDebug()<<"f"<<fm.height();
+//    int xxOffset=baseX;
+//    int yyOffset=baseY+850;
+//    int nameYPos=250;
+//    int adrYPos=480;
+//    int postalCodePos=780;
+//    int charSpace=120;
+//    int postalCodeDiv=40;
+//    int lineOffset=80;
+//    painter.begin(printer);
+//    painter.setFont(serifFont);
+//    bool newPage=false;
+//    foreach(adress adr,adresses)
+//    {
+//        if(newPage)
+//        {
+//            printer->newPage();
+//            newPage=false;
+//        }
+//        painter.drawText(baseX,nameYPos+baseY,adr.lastName+", "+adr.firstName);
+//        painter.drawText(baseX,adrYPos+baseY,adr.adress1);
+//        painter.drawText(baseX,adrYPos+baseY+lineOffset,adr.adress2);
+//        int pc=0;
+//        int xxx=0;
+//        painter.drawText(pc+baseX+900,postalCodePos+baseY,adr.postalCode);
+//        QString compose;
+//        compose=adr.city;
+//        if(!adr.state.isEmpty() && !adr.state.contains("State unknown"))
+//            compose=compose+", "+adr.state;
+//        compose=compose+", "+adr.country;
+//        painter.drawText(baseX+1300,postalCodePos+baseY,compose);
+//        painter.drawText(xxOffset,nameYPos+yyOffset,sender.lastName+", "+sender.firstName);
+//        painter.drawText(xxOffset,adrYPos+yyOffset,sender.adress1);
+//        painter.drawText(xxOffset,adrYPos+yyOffset+lineOffset,sender.adress2);
+//        pc=0;
+//        xxx=0;
+//        for(int xx=0;xx<sender.postalCode.length();++xx)
+//        {
+//            if(xx>3)
+//                pc=postalCodeDiv;
+//            if(sender.postalCode[xx]!='-')
+//            {
+//                painter.drawText(pc+baseX+charSpace*xxx-50,postalCodePos+yyOffset,QString(sender.postalCode[xx]));
+//                ++xxx;
+//            }
+//        }
+//        compose=sender.city;
+//        if(!sender.state.isEmpty())
+//            compose=compose+", "+sender.state;
+//        compose=compose+", "+sender.country;
+//        painter.drawText(baseX+800,postalCodePos+yyOffset,compose);
+//        newPage=true;
+//    }
+//    painter.end();
+//}
 void prestaConnector::filterOrders(QString currentState,QByteArray & data,QStringList & deliveryAdressList,QStringList & invoiceAdressList,QStringList & ordersList)
 {
         QDomDocument doc;

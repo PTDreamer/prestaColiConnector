@@ -167,7 +167,7 @@ void MainWindow::on_pushButton_5_clicked()//Manual:Print Registos de envio
         QPrinterInfo infoBro;
         foreach(QPrinterInfo info,QPrinterInfo::availablePrinters())
         {
-            if(info.printerName()=="Brother DCP-145C Printer")
+            if(info.printerName()=="EPSON SX130 Series")
                 infoBro=info;
             qDebug()<<info.printerName();
         }
@@ -188,7 +188,14 @@ void MainWindow::on_pushButton_4_clicked()//Manual:Print Auto Brother
     }
     else
     {
-        QPrinter printer( QPrinter::HighResolution );
+        QPrinterInfo infoBro;
+        foreach(QPrinterInfo info,QPrinterInfo::availablePrinters())
+        {
+            if(info.printerName()=="Brother QL-700")
+                infoBro=info;
+            qDebug()<<info.printerName();
+        }
+        QPrinter printer(infoBro, QPrinter::HighResolution );
         printer.setPaperSize(QSizeF(62,100),QPrinter::Millimeter);
         printer.setPageMargins(0,0,0,0,QPrinter::Millimeter);
         QPrintPreviewDialog  preview( &printer, this );
