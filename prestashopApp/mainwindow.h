@@ -42,8 +42,6 @@ public:
     bool coliBackup();
     void takeCareOffStuff();
     void registosRender(QPrinter *printer);
-signals:
-    void newZbarRead(QString);
 private slots:
     void coliReadyRead();
     void coliStarted();
@@ -70,12 +68,9 @@ private slots:
     void on_pushButton_2_clicked();
     void on_pushButton_8_clicked();
     void automationTimerSlot();
-    void zbarReadyRead();
     void on_pushButton_9_clicked();
 
 private:
-    QProcess * zbar;
-    QString lastZbar;
     QProcess * coliProcess;
     QMap<QString,prestaConnector::adress> adrMap;
     QMap<QString,prestaConnector::order> orderMap;

@@ -464,16 +464,6 @@ void MainWindow::automationTimerSlot()
     automationTimer.start(10000);
 }
 
-void MainWindow::zbarReadyRead()
-{
-    QString lastZbarTemp=QString(zbar->readAllStandardOutput());
-    if(lastZbarTemp!=lastZbar)
-    {
-        lastZbar=lastZbarTemp;
-        emit newZbarRead(lastZbar);
-    }
-}
-
 void MainWindow::takeCareOffStuff()
 {
     if(adrMap.values().length()<1)
@@ -483,14 +473,6 @@ void MainWindow::takeCareOffStuff()
     else
     {
         ui->log->append(QString("Automation:STARTED %0 adresses and %1 orders").arg(adrMap.values().length()).arg(orderMap.values().length()));
-        QStringList arguments;
-        arguments << "--raw";
-        zbar = new QProcess();
-        connect(zbar,SIGNAL(started()),this,SLOT(zbarStarted()));
-        zbar->setReadChannel(QProcess::StandardOutput);
-        ui->log->append("Automation:Starting Zbar");
-        zbar->start(dialog->getZBarPath(), arguments);
-        connect(zbar,SIGNAL(readyRead()),SLOT(zbarReadyRead()));
 
         ui->log->append("Automation:Starting Stickers printing");
         QPrinterInfo infoBro;
@@ -502,7 +484,7 @@ void MainWindow::takeCareOffStuff()
         QPrinter printer(infoBro, QPrinter::HighResolution );
         printer.setPaperSize(QSizeF(62,100),QPrinter::Millimeter);
         printer.setPageMargins(0,0,0,0,QPrinter::Millimeter);
-        brotherRender(&printer);
+      //  brotherRender(&printer);
         ui->log->append("Automation:Started Register printing");
         foreach(QPrinterInfo info,QPrinterInfo::availablePrinters())
         {
@@ -514,13 +496,8 @@ void MainWindow::takeCareOffStuff()
         printer2.setPageSize(QPrinter::A5);
         printer2.setPageMargins(0,0,0,0,QPrinter::Millimeter);
         {
-            QEventLoop loop;
-            QTimer timer;
-            timer.setSingleShot(true);
+
             QMap<QString,QString> tracking;
-            bool error=false;
-            connect(this,SIGNAL(newZbarRead(QString)),&loop,SLOT(quit()));
-            connect(&timer,SIGNAL(timeout()),&loop,SLOT(quit()));
             prestaConnector::adress adr;
             adr.firstName="José";
             adr.lastName="Barros";
@@ -537,25 +514,19 @@ void MainWindow::takeCareOffStuff()
                 QList<prestaConnector::adress>fakeList;
                 fakeList.append(list);
                 connector.renderRegistosPreview(dialog->getFont(),dialog->getRegFontSize(),dialog->getRegBaseX(),dialog->getRegBaseY(),adr,fakeList,&printer2);
-                if(!error)
+                bool ok;
+               QString text = QInputDialog::getText(this, tr("Scan Tracking number"),
+                                                         QString("Customer name:%0").arg(list.lastName), QLineEdit::Normal,
+                                                    "", &ok);
+
                 {
-                    timer.start(15);
-                    loop.exec();
-                    if(timer.isActive())
-                    {
-                        ui->log->append("Automation:Zbar didn't send tracking, aborting next readings to keep sync");
-                        ui->errors->setStyleSheet("color: rgb(255, 0, 0)");
-                        ui->errors->setText("ZBar Error");
-                        error=true;
-                    }
-                    else
                     {
                         foreach(prestaConnector::order order, orderMap.values())
                         {
                             if(order.address_delivery==list.ID)
                             {
-                                tracking.insert(order.ID,lastZbar);
-                                ui->log->append(QString("Automation:Added tracking number %0 to order %1").arg(lastZbar).arg(order.ID));
+                                tracking.insert(order.ID,text);
+                                ui->log->append(QString("Automation:Added tracking number %0 to order %1").arg(text).arg(order.ID));
                                         break;
                             }
                         }
@@ -566,8 +537,6 @@ void MainWindow::takeCareOffStuff()
             {
                 connector.setTracking(dialog->getLogin(),dialog->getHost(),orderID,tracking.value(orderID,""));
             }
-            ui->log->append("Automation:Closing ZBar");
-            zbar->terminate();
         }
 
     }
