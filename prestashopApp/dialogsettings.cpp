@@ -12,7 +12,7 @@ DialogSettings::DialogSettings(QSettings * settings,QWidget *parent) :
     ui->regPrinter->clear();
     ui->coliPrinter->clear();
 
-    ui->zbar->setText(m_settings->value("zbar","").toString());
+
 
     foreach(QPrinterInfo info,QPrinterInfo::availablePrinters())
     {
@@ -61,7 +61,7 @@ void DialogSettings::on_buttonBox_accepted()
     m_settings->setValue("autoFontSize",ui->autoFontSize->value());
     m_settings->setValue("autoPrintA4",ui->autoPrintA4->isChecked());
     m_settings->setValue("autoPrinter",ui->autoPrinter->currentText());
-    m_settings->setValue("zbar",ui->zbar->text());
+
 
     m_settings->setValue("regBaseX",ui->regBaseX->value());
     m_settings->setValue("regBaseY",ui->regBaseY->value());

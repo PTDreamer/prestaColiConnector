@@ -31,6 +31,3 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     resources.qrc
-
-unix:!macx:!symbian: LIBS += -lzbarqt
-unix:!macx:!symbian: LIBS += -lzbar

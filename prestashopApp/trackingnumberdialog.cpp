@@ -1,7 +1,7 @@
 #include "trackingnumberdialog.h"
 #include "ui_trackingnumberdialog.h"
 
-TrackingNumberDialog::TrackingNumberDialog(QString zbarPath,QMap<QString, track> * map,QWidget *parent) :
+TrackingNumberDialog::TrackingNumberDialog(QMap<QString, track> * map,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::TrackingNumberDialog),index(0)
 {
@@ -12,21 +12,13 @@ TrackingNumberDialog::TrackingNumberDialog(QString zbarPath,QMap<QString, track>
     if(map->values().length()<2)
     {
         hideNavButtons(false);
-    }
-    QStringList arguments;
-   // arguments << "-style";//TODO
-    zbar = new QProcess(parent);
-    connect(zbar,SIGNAL(started()),this,SLOT(zbarStarted()));
-    zbar->setReadChannel(QProcess::StandardOutput);
-  //  zbar->start(zbarPath, arguments);
-    connect(zbar,SIGNAL(readyRead()),SLOT(zbarReadyRead()));
+    } 
     this->setFocus();
     ui->trackingNumber->setFocus();
 }
 
 TrackingNumberDialog::~TrackingNumberDialog()
 {
-    zbar->terminate();
     delete ui;
 }
 
@@ -83,26 +75,4 @@ void TrackingNumberDialog::hideNavButtons(bool show)
     ui->pbnext->setVisible(show);
     ui->pbOK->setVisible(show);
     ui->pbprevious->setVisible(show);
-}
-void TrackingNumberDialog::zbarReadyRead()
-{
-    QByteArray temp=zbar->readAllStandardOutput();
-    QString s(temp);
-
-    qDebug()<<"SCANNED:"<<s;
-    ui->trackingNumber->setText(s);
-    on_pbOK_clicked();
-}
-void TrackingNumberDialog::zbarStarted()
-{
-    static bool flag=false;
-    if(!flag)
-    {
-        QTimer::singleShot(1000,this,SLOT(zbarStarted()));
-        flag=true;
-    }
-    qDebug()<<"FORCE";
-    this->activateWindow();
-    this->setFocus();
-    ui->trackingNumber->setFocus();
 }

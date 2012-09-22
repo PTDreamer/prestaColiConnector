@@ -1,18 +1,11 @@
 #include "senddialog.h"
 #include "ui_senddialog.h"
 
-sendDialog::sendDialog(QString zbarPath,QString host,QString login,QWidget *parent) :
+sendDialog::sendDialog(QString host,QString login,QWidget *parent) :
     QDialog(parent),
     ui(new Ui::sendDialog),m_host(host),m_login(login)
 {
     ui->setupUi(this);
-    QStringList arguments;
-   // arguments << "-style";//TODO
-    zbar = new QProcess(parent);
-    connect(zbar,SIGNAL(started()),this,SLOT(zbarStarted()));
-    zbar->setReadChannel(QProcess::StandardOutput);
-//    zbar->start(zbarPath, arguments);
-    connect(zbar,SIGNAL(readyRead()),SLOT(zbarReadyRead()));
     this->setFocus();
     ui->trackingNumber->setFocus();
     connect(&settingTimer,SIGNAL(timeout()),this,SLOT(settingTimerSlot()));
@@ -20,7 +13,6 @@ sendDialog::sendDialog(QString zbarPath,QString host,QString login,QWidget *pare
 
 sendDialog::~sendDialog()
 {
-    zbar->terminate();
     delete ui;
 }
 
@@ -44,30 +36,6 @@ void sendDialog::save()
     connector.setOrderField(m_login,m_host,currentID,"current_state","1");
 }
 
-void sendDialog::zbarStarted()
-{
-    static bool flag=false;
-    if(!flag)
-    {
-        QTimer::singleShot(1000,this,SLOT(zbarStarted()));
-        flag=true;
-    }
-    qDebug()<<"FORCE";
-    this->activateWindow();
-    this->setFocus();
-    ui->trackingNumber->setFocus();
-}
-
-void sendDialog::zbarReadyRead()
-{
-    QByteArray temp=zbar->readAllStandardOutput();
-    QString s(temp);
-
-    qDebug()<<"SCANNED:"<<s;
-    ui->trackingNumber->setText(s);
-    on_trackingNumber_returnPressed();
-}
-
 void sendDialog::on_trackingNumber_returnPressed()
 {
     if(settingTimer.isActive())
@@ -82,7 +50,7 @@ void sendDialog::on_trackingNumber_returnPressed()
     QByteArray array=connector.getOrders(m_login,m_host,QStringList(),false,filter);
     connector.ordersToStruct(array,orders);
 
-    if(orders.values().length()>1)
+    if(orders.values().length()>1 || orders.values().length()==0)
     {
         ui->customerName->setText("NOT FOUND");
     }

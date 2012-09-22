@@ -23,13 +23,12 @@ public:
         QString customerName;
         QString trackingNumber;
     };
-    explicit sendDialog(QString zbarPath,QString host,QString login,QWidget *parent = 0);
+    explicit sendDialog(QString host,QString login,QWidget *parent=NULL);
     ~sendDialog();
     
     void save();
 private:
     Ui::sendDialog *ui;
-    QProcess *zbar;
     prestaConnector connector;
     QString m_login;
     QString m_host;
@@ -39,8 +38,6 @@ private:
 public slots:
     void on_trackingNumber_returnPressed();
     void settingTimerSlot();
-    void zbarStarted();
-    void zbarReadyRead();
 signals:
     void debugOutput(QString text);
 private slots:

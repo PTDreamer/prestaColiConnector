@@ -20,7 +20,6 @@ public:
     int getAutoFontSize(){return m_settings->value("autoFontSize",15).toInt();}
     bool getAutoPrintA4(){return m_settings->value("autoPrintA4",false).toBool();}
     QString getAutoPrinter(){return m_settings->value("autoPrinter","none").toString();}
-    QString getZBarPath(){return m_settings->value("zbar","").toString();}
 
     int getRegBaseX(){return m_settings->value("regBaseX",370).toInt();}
     int getRegBaseY(){return m_settings->value("regBaseY",840).toInt();}

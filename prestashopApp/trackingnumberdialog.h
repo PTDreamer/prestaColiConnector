@@ -22,16 +22,14 @@ public:
         QString customerName;
         QString trackingNumber;
     };
-    explicit TrackingNumberDialog(QString zbarPath,QMap<QString,track> * map,QWidget *parent = 0);
+    explicit TrackingNumberDialog(QMap<QString,track> * map,QWidget *parent = 0);
     ~TrackingNumberDialog();
     void load(int order);
     void hideNavButtons(bool show);
 
 public slots:
-    void zbarStarted();
     void on_pbnext_clicked();
     void on_pbOK_clicked();
-    void zbarReadyRead();
 
 private slots:
     void on_pbprevious_clicked();
@@ -40,7 +38,6 @@ private slots:
 
 
 private:
-    QProcess *zbar;
     QMap<QString, track> * mappointer;
     int index;
     Ui::TrackingNumberDialog *ui;

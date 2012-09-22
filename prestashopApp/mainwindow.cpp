@@ -384,7 +384,7 @@ void MainWindow::on_pushButton_7_clicked()//Manual:Set Tracking number
     }
     if(list->values().length()<1)
         return;
-    TrackingNumberDialog dia(dialog->getZBarPath(),list);
+    TrackingNumberDialog dia(list);
     if(dia.exec()==QDialog::Accepted)
     {
         foreach(TrackingNumberDialog::track track,list->values())
@@ -436,7 +436,7 @@ int MainWindow::processColibriOutput(QString file)
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    sendDialog * dia=new sendDialog(dialog->getZBarPath(),dialog->getHost(),dialog->getLogin());
+    sendDialog * dia=new sendDialog(dialog->getHost(),dialog->getLogin());
     dia->exec();
     delete dia;
 }
