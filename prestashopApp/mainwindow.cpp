@@ -23,7 +23,16 @@ MainWindow::MainWindow(QWidget *parent) :
    // processColibriOutput("/home/jb/test");
     connector.loadCountriesAndStates(dialog->getLogin(),dialog->getHost());
     connect(&connector,SIGNAL(debuggingInfo(QString)),this,SLOT(addDebugInfo(QString)));
+    automationTimer.start(10000);
+    connect(&automationTimer,SIGNAL(timeout()),this,SLOT(automationTimerSlot()));
 
+    automode=(mode)settings->value("automode",0).toInt();
+    if(automode==MainWindow::none)
+        ui->doNothing->setChecked(true);
+    else if(automode==MainWindow::autofetch)
+        ui->checkOnly->setChecked(true);
+    else if(automode==MainWindow::fullauto)
+        ui->autoFetchPrint->setChecked(true);
     /*
     prestaConnector con;
     QStringList list;
@@ -62,6 +71,7 @@ void MainWindow::setMode()
         automode=MainWindow::autofetch;
     else if(ui->autoFetchPrint->isChecked())
         automode=MainWindow::fullauto;
+    settings->setValue("automode",automode);
 }
 void MainWindow::on_pushButton_clicked()//Manual:FetchOrders
 {
@@ -436,6 +446,134 @@ void MainWindow::on_pushButton_8_clicked()
 {
     connector.checkDelivery(dialog->getLogin(),dialog->getHost());
 }
+
+void MainWindow::automationTimerSlot()
+{
+    automationTimer.stop();
+    switch(automode)
+    {
+    case none:
+
+        break;
+    case autofetch:
+        on_pushButton_clicked();
+        break;
+    case fullauto:
+        break;
+    }
+    automationTimer.start(10000);
+}
+
+void MainWindow::zbarReadyRead()
+{
+    QString lastZbarTemp=QString(zbar->readAllStandardOutput());
+    if(lastZbarTemp!=lastZbar)
+    {
+        lastZbar=lastZbarTemp;
+        emit newZbarRead(lastZbar);
+    }
+}
+
+void MainWindow::takeCareOffStuff()
+{
+    if(adrMap.values().length()<1)
+    {
+        return;
+    }
+    else
+    {
+        ui->log->append(QString("Automation:STARTED %0 adresses and %1 orders").arg(adrMap.values().length()).arg(orderMap.values().length()));
+        QStringList arguments;
+        arguments << "--raw";
+        zbar = new QProcess();
+        connect(zbar,SIGNAL(started()),this,SLOT(zbarStarted()));
+        zbar->setReadChannel(QProcess::StandardOutput);
+        ui->log->append("Automation:Starting Zbar");
+        zbar->start(dialog->getZBarPath(), arguments);
+        connect(zbar,SIGNAL(readyRead()),SLOT(zbarReadyRead()));
+
+        ui->log->append("Automation:Starting Stickers printing");
+        QPrinterInfo infoBro;
+        foreach(QPrinterInfo info,QPrinterInfo::availablePrinters())
+        {
+            if(info.printerName()==dialog->getAutoPrinter())
+                infoBro=info;
+        }
+        QPrinter printer(infoBro, QPrinter::HighResolution );
+        printer.setPaperSize(QSizeF(62,100),QPrinter::Millimeter);
+        printer.setPageMargins(0,0,0,0,QPrinter::Millimeter);
+        brotherRender(&printer);
+        ui->log->append("Automation:Started Register printing");
+        foreach(QPrinterInfo info,QPrinterInfo::availablePrinters())
+        {
+            if(info.printerName()==dialog->getRegPrinter())
+                infoBro=info;
+            qDebug()<<info.printerName();
+        }
+        QPrinter printer2(infoBro, QPrinter::HighResolution );
+        printer2.setPageSize(QPrinter::A5);
+        printer2.setPageMargins(0,0,0,0,QPrinter::Millimeter);
+        {
+            QEventLoop loop;
+            QTimer timer;
+            timer.setSingleShot(true);
+            QMap<QString,QString> tracking;
+            bool error=false;
+            connect(this,SIGNAL(newZbarRead(QString)),&loop,SLOT(quit()));
+            connect(&timer,SIGNAL(timeout()),&loop,SLOT(quit()));
+            prestaConnector::adress adr;
+            adr.firstName="José";
+            adr.lastName="Barros";
+            adr.postalCode="2825-439";
+            adr.adress1="Rua José Maria Pedroto Nº12,1ºE";
+            adr.adress2="Santo António";
+            adr.country="Portugal";
+            adr.city="Costa de Caparica";
+            adr.company="JB Tech";
+            adr.state="";
+            foreach(prestaConnector::adress list,adrMap.values())
+            {
+                ui->log->append(QString("Automation:Printing register adrID=%0").arg(list.ID));
+                QList<prestaConnector::adress>fakeList;
+                fakeList.append(list);
+                connector.renderRegistosPreview(dialog->getFont(),dialog->getRegFontSize(),dialog->getRegBaseX(),dialog->getRegBaseY(),adr,fakeList,&printer2);
+                if(!error)
+                {
+                    timer.start(15);
+                    loop.exec();
+                    if(timer.isActive())
+                    {
+                        ui->log->append("Automation:Zbar didn't send tracking, aborting next readings to keep sync");
+                        ui->errors->setStyleSheet("color: rgb(255, 0, 0)");
+                        ui->errors->setText("ZBar Error");
+                        error=true;
+                    }
+                    else
+                    {
+                        foreach(prestaConnector::order order, orderMap.values())
+                        {
+                            if(order.address_delivery==list.ID)
+                            {
+                                tracking.insert(order.ID,lastZbar);
+                                ui->log->append(QString("Automation:Added tracking number %0 to order %1").arg(lastZbar).arg(order.ID));
+                                        break;
+                            }
+                        }
+                    }
+                }
+            }
+            foreach(QString orderID,tracking.keys())
+            {
+                connector.setTracking(dialog->getLogin(),dialog->getHost(),orderID,tracking.value(orderID,""));
+            }
+            ui->log->append("Automation:Closing ZBar");
+            zbar->terminate();
+        }
+
+    }
+}
+
+
 void MainWindow::addDebugInfo(QString text)
 {
     ui->log->append(text);
@@ -460,4 +598,10 @@ void MainWindow::coliReadyRead()
 void MainWindow::coliStarted()
 {
     qDebug()<<"COLI STARTED";
+}
+
+void MainWindow::on_pushButton_9_clicked()
+{
+    on_pushButton_clicked();
+    takeCareOffStuff();
 }

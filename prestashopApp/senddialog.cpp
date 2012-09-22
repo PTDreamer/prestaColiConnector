@@ -11,7 +11,7 @@ sendDialog::sendDialog(QString zbarPath,QString host,QString login,QWidget *pare
     zbar = new QProcess(parent);
     connect(zbar,SIGNAL(started()),this,SLOT(zbarStarted()));
     zbar->setReadChannel(QProcess::StandardOutput);
-    zbar->start(zbarPath, arguments);
+//    zbar->start(zbarPath, arguments);
     connect(zbar,SIGNAL(readyRead()),SLOT(zbarReadyRead()));
     this->setFocus();
     ui->trackingNumber->setFocus();

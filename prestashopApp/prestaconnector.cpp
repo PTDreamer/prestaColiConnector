@@ -382,6 +382,7 @@ void prestaConnector::ordersToStruct(QByteArray array,QMap<QString,prestaConnect
 }
 void prestaConnector::setTracking(QString user,QString host,QString orderID,QString trackingNumber)
 {
+    emit debuggingInfo(QString("Connector:setting tracking %0 to orderID:%1").arg(trackingNumber).arg(orderID));
     setOrderField(user,host,orderID,"shipping_number",trackingNumber);
 }
 void prestaConnector::setOrderField(QString user,QString host,QString orderID,QString field,QString value)

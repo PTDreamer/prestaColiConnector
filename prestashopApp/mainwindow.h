@@ -32,62 +32,50 @@ namespace Ui {
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
 public:
     enum mode{none,autofetch,fullauto};
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
     void cleanRecords();
-
     void refreshTable();
     int processColibriOutput(QString file);
     bool coliBackup();
+    void takeCareOffStuff();
+    void registosRender(QPrinter *printer);
+signals:
+    void newZbarRead(QString);
 private slots:
     void coliReadyRead();
     void coliStarted();
     void addDebugInfo(QString text);
     void on_actionOptions_triggered();
-
     void setMode();
-
     void on_pushButton_clicked();
-
     void on_tableWidget_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
-
     void on_pushButton_3_clicked();
-
     void a4Render(QPrinter * printer);
     void brotherRender(QPrinter *printer);
-    void registosRender(QPrinter *printer);
     void a4SenderRender(QPrinter *printer);
-
     void on_pushButton_5_clicked();
-
     void on_pushButton_4_clicked();
-
     void on_actionImprimir_minha_morada_para_A4_triggered();
-
     void on_pushButton_6_clicked();
     void colibriFinished (int exitCode, QProcess::ExitStatus exitStatus );
-
     void on_addByOrderIDAct_clicked();
-
     void on_addByCustomerIDAct_clicked();
-
     void on_addByCustomerNameAct_clicked();
-
     void on_deleteAllAct_clicked();
-
     void on_deleteAct_clicked();
-
     void on_pushButton_7_clicked();
-
     void on_pushButton_2_clicked();
-
     void on_pushButton_8_clicked();
+    void automationTimerSlot();
+    void zbarReadyRead();
+    void on_pushButton_9_clicked();
 
 private:
+    QProcess * zbar;
+    QString lastZbar;
     QProcess * coliProcess;
     QMap<QString,prestaConnector::adress> adrMap;
     QMap<QString,prestaConnector::order> orderMap;
@@ -99,39 +87,7 @@ private:
     mode automode;
     prestaConnector connector;
     DialogSettings * dialog;
-    /*
-    void getAllOrders();
-    void on_pushButton_3_clicked();
-    void renderPreview(QPrinter *printer);
-    void renderRegistosPreview(QPrinter *printer);
-    void on_pushButton_2_clicked();
-
-    void on_pushButton_clicked();
-
-    void on_pushButton_5_clicked();
-
-    void on_pushButton_4_clicked();
-
-    void on_actionOptions_triggered();
-
-private:
-    void processOrders(QNetworkReply *);
-    void processAddresses(QNetworkReply * reply);
-    void getAdresses();
-    void getStates();
-    void retrieveCountries();
-    QList<QString> orders;
-    QStringList ordersIDs;
-    QList<adress> adresses;
-    QPrinter printer;
-    Ui::MainWindow *ui;
-    QNetworkAccessManager *m_network;
-    QNetworkReply *nreply;
-    QMap <QString,QString> countries;
-    QMap <QString,QString> states;
-    adress myAdress;
-    QSettings * settings;
-*/
+    QTimer automationTimer;
 };
 
 #endif // MAINWINDOW_H
