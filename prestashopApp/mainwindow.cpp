@@ -17,22 +17,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     settings=new QSettings("JB Tech","prestashop app",this);
     dialog=new DialogSettings(settings,this);
-    connect(ui->doNothing,SIGNAL(toggled(bool)),this,SLOT(setMode()));
-    connect(ui->autoFetchPrint,SIGNAL(toggled(bool)),this,SLOT(setMode()));
-    connect(ui->checkOnly,SIGNAL(toggled(bool)),this,SLOT(setMode()));
-   // processColibriOutput("/home/jb/test");
     connector.loadCountriesAndStates(dialog->getLogin(),dialog->getHost());
     connect(&connector,SIGNAL(debuggingInfo(QString)),this,SLOT(addDebugInfo(QString)));
-    automationTimer.start(10000);
-    connect(&automationTimer,SIGNAL(timeout()),this,SLOT(automationTimerSlot()));
 
-    automode=(mode)settings->value("automode",0).toInt();
-    if(automode==MainWindow::none)
-        ui->doNothing->setChecked(true);
-    else if(automode==MainWindow::autofetch)
-        ui->checkOnly->setChecked(true);
-    else if(automode==MainWindow::fullauto)
-        ui->autoFetchPrint->setChecked(true);
     /*
     prestaConnector con;
     QStringList list;
@@ -61,17 +48,6 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionOptions_triggered()
 {
     dialog->exec();
-}
-
-void MainWindow::setMode()
-{
-    if(ui->doNothing->isChecked())
-        automode=MainWindow::none;
-    else if(ui->checkOnly->isChecked())
-        automode=MainWindow::autofetch;
-    else if(ui->autoFetchPrint->isChecked())
-        automode=MainWindow::fullauto;
-    settings->setValue("automode",automode);
 }
 void MainWindow::on_pushButton_clicked()//Manual:FetchOrders
 {
@@ -249,7 +225,6 @@ void MainWindow::on_pushButton_6_clicked()//Manual:Print faturas
 {
     if(coliBackup())
     {
-        QMap<QString,QString> tempmap;
         //  QByteArray temp=connector.retrieveCountries(dialog->getLogin(),dialog->getHost(),tempmap);
         //  connector.arrayToFile(temp,dialog->getColiCountriesFile());
         connector.arrayToFile(invoiceAdrArray,dialog->getColiCustomersFile());
@@ -447,23 +422,6 @@ void MainWindow::on_pushButton_8_clicked()
     connector.checkDelivery(dialog->getLogin(),dialog->getHost());
 }
 
-void MainWindow::automationTimerSlot()
-{
-    automationTimer.stop();
-    switch(automode)
-    {
-    case none:
-
-        break;
-    case autofetch:
-        on_pushButton_clicked();
-        break;
-    case fullauto:
-        break;
-    }
-    automationTimer.start(10000);
-}
-
 void MainWindow::takeCareOffStuff()
 {
     if(adrMap.values().length()<1)
@@ -484,7 +442,7 @@ void MainWindow::takeCareOffStuff()
         QPrinter printer(infoBro, QPrinter::HighResolution );
         printer.setPaperSize(QSizeF(62,100),QPrinter::Millimeter);
         printer.setPageMargins(0,0,0,0,QPrinter::Millimeter);
-      //  brotherRender(&printer);
+        brotherRender(&printer);
         ui->log->append("Automation:Started Register printing");
         foreach(QPrinterInfo info,QPrinterInfo::availablePrinters())
         {
@@ -537,6 +495,27 @@ void MainWindow::takeCareOffStuff()
             {
                 connector.setTracking(dialog->getLogin(),dialog->getHost(),orderID,tracking.value(orderID,""));
             }
+        }
+        {
+            ui->log->append("Automation:Started Invoice printing");
+            if(coliBackup())
+            {
+                connector.arrayToFile(invoiceAdrArray,dialog->getColiCustomersFile());
+                connector.arrayToFile(filteredOrders,dialog->getColiOrdersFile());
+                QStringList coliParameters;
+                coliParameters<<"-license"<<dialog->getColiLicense()<<"-database"<<dialog->getColiDB();
+                coliParameters<<"-ordersFile"<<dialog->getColiOrdersFile()<<"-customersFile"<<dialog->getColiCustomersFile();
+                coliParameters<<"-outputFile"<<dialog->getColiOutputFile()<<"-printerName"<<dialog->getColiPrinter();
+                coliProcess=new QProcess(this);
+                coliProcess->setReadChannel(QProcess::StandardOutput);
+                connect(coliProcess,SIGNAL(finished(int, QProcess::ExitStatus)),this,SLOT(colibriFinished (int, QProcess::ExitStatus)));
+                connect(coliProcess,SIGNAL(readyRead()),this,SLOT(coliReadyRead()));
+                connect(coliProcess,SIGNAL(started()),this,SLOT(coliStarted()));
+                coliProcess->start(dialog->getColiPath(),coliParameters);
+                qDebug()<<coliProcess->state()<<dialog->getColiPath();
+            }
+            else
+                ui->log->append("Could not backup colibri DB, not goig to process invoices");
         }
 
     }

@@ -47,7 +47,6 @@ private slots:
     void coliStarted();
     void addDebugInfo(QString text);
     void on_actionOptions_triggered();
-    void setMode();
     void on_pushButton_clicked();
     void on_tableWidget_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
     void on_pushButton_3_clicked();
@@ -67,7 +66,6 @@ private slots:
     void on_pushButton_7_clicked();
     void on_pushButton_2_clicked();
     void on_pushButton_8_clicked();
-    void automationTimerSlot();
     void on_pushButton_9_clicked();
 
 private:
@@ -79,7 +77,6 @@ private:
     QByteArray invoiceAdrArray;
     Ui::MainWindow *ui;
     QSettings * settings;
-    mode automode;
     prestaConnector connector;
     DialogSettings * dialog;
     QTimer automationTimer;
